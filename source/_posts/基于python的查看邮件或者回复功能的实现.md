@@ -3,7 +3,8 @@ title: 基于python实现gmail邮件查看，回复
 layour: post
 tags: [python, gmail, imap, smtplib]
 categories: python
-date: 2023-01-24 12:25:08
+index_img: /img/gmail.jpg
+date: 2023-01-28 12:25:08
 ---
 # 快速开始
 
@@ -42,7 +43,6 @@ def sead_email(): #发送邮件函数
     server.quit() #断开连接
     print('Email sent!')
 ```
-
 
 ### 全局变量
 
