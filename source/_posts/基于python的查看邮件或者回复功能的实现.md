@@ -1,5 +1,6 @@
 ---
 title: 基于python实现gmail邮件查看，回复
+uuid: fc0309b0-a0ac-11ed-84ba-b9f795e55c9d
 layour: post
 tags: [python, gmail, imap, smtplib]
 categories: python

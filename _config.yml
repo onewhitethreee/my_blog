@@ -103,3 +103,13 @@ theme: fluid
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ''
+
+
+jsonContent: 
+  meta: false 
+  pages: false 
+  posts: 
+    title: true 
+    path: true 
+    text: false 
+    uuid: true

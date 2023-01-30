@@ -1,12 +1,12 @@
 ---
 title: 基于python实现gmail邮件查看，回复
 layour: post
+uuid: 0c449140-a0ad-11ed-b6de-e73c5841cd31
 tags: [python, gmail, imap, smtplib]
 categories: python
 index_img: /img/gmail.jpg
 date: 2023-01-29 18:07:08
 ---
-
 ---
 
 # imaplib的一些操作
