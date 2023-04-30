@@ -113,3 +113,8 @@ jsonContent:
     path: true 
     text: false 
     uuid: true
+
+meilisearch:
+  host: 'https://ms-e0f67beb9b85-1390.sgp.meilisearch.io/'
+  searchKey: 'a9ce249b94a91ef198e0e337617050d85aa8fc2a9472732dd5c03dc5094b4a38'
+  indexName: 'zhihux'
