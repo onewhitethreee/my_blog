@@ -2,7 +2,7 @@
 title: C++实现日期基本类，重载运算符，友元..【第一篇】
 layour: post
 uuid: 1
-tags: [C++, class]
+tags: [C++]
 categories: C++
 date: 2024-03-3 01:26
 ---
