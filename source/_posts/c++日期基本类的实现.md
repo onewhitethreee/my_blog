@@ -1,12 +1,12 @@
 ---
 title: C++实现日期基本类，重载运算符，友元..【第一篇】
 layour: post
-uuid: 1
-tags: [C++]
-categories: C++
-date: 2024-03-3 01:26
+uuid: 0c449140-a0ad-11ed-b6de-e73c5841cd311
+tags: [python, gmail, imap, smtplib]
+categories: python
+index_img: /img/gmail.jpg
+date: 2023-01-29 18:07:08
 ---
-
 # C++实现日期基本类，重载运算符，友元..【第一篇】
 
 最近刚好写完了关于c++的日期类实现。特地来分享给大家
