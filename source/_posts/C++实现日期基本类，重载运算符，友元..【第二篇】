@@ -1,4 +1,12 @@
-[md]# C++实现日期基本类，重载运算符，友元..【第二篇】
+---
+title:C++实现日期基本类，重载运算符，友元..【第二篇】
+layour: post
+uuid: 0c449140-a0ad-11ed-b6de-e73c5841cd311
+tags: [C++, class]
+categories: C++
+date: 2024-04-03 18:07:08
+---
+# C++实现日期基本类，重载运算符，友元..【第二篇】
 
 这一篇给大家带来仿vector的日期类实现，只实现了个最简单的功能，话不多说，开干！
 
@@ -353,4 +361,4 @@ bool TVectorCalendario::Redimensionar(const int new_size)
     return true;
 
 }
-```[/md]
+```
