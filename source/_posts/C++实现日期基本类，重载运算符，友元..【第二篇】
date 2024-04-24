@@ -1,0 +1,356 @@
+[md]# C++实现日期基本类，重载运算符，友元..【第二篇】
+
+这一篇给大家带来仿vector的日期类实现，只实现了个最简单的功能，话不多说，开干！
+
+---
+
+## 私有成员
+
+`TCalendario *c;` // 表示一个日期方法
+
+`int tamano;` // 表示方法大小
+
+`TCalendario error;` // 表示一个日期方法，如果程序出错了就返回一个默认日期
+
+`int get_month_day(int month, int year) const;` // 判断年份然后返回正确的月数天数
+
+`bool check_days_correct(int day, int month, int year) const;` // 判断日期是否正确
+
+## 公有成员
+
+默认构造函数，用来初始化一个vector
+`TVectorCalendario();`
+
+带有一个int的构造函数，用来初始化一个int大小的vector
+`TVectorCalendario(const int);`
+
+拷贝构造函数
+`TVectorCalendario(const TVectorCalendario &);`
+
+析构函数
+`~TVectorCalendario();`
+
+赋值运算符重载
+`TVectorCalendario &operator=(const TVectorCalendario &);`
+
+等号运算符重载
+`bool operator==(const TVectorCalendario &) const;`
+
+不等号运算符重载
+`bool operator!=(const TVectorCalendario &) const;`
+
+左方括号运算符重载  
+`TCalendario &operator[](int);`
+
+右方括号运算符重载  
+`TCalendario operator[](const int) const;`
+
+获取vector的大小  
+`int Tamano() const;`
+
+判断是否为一个默认日期并返回次数
+`int Ocupadas() const;`
+
+判断一个日期是否在一个vector中
+`bool ExisteCal(const TCalendario &) const;`
+
+打印所有大于or等于传进来日期
+`void MostrarMensajes(int, int, int);`
+
+跟STL::vector中的resize同等作用
+`bool Redimensionar(const int);`
+
+## 实现默认构造析构函数
+
+###  默认构造函数
+
+默认构造函数需要将私有成员 *c* 进行初始化，值为null，然后大小为0
+`TVectorCalendario::TVectorCalendario() : c(nullptr), tamano(0) {}`
+
+带有一个int的额构造函数。和默认构造函数一样，不过这个需要加入一个判断int是否大于0，小于0的int没有意义所以要交给默认构造函数来进行构造。而大于0的则要使用new来进行创建一个大小为int的日期类。
+```
+TVectorCalendario::TVectorCalendario(const int tamano)
+{
+    if (tamano < 0)
+    {
+        this->c = nullptr;
+        this->tamano = 0;
+    }
+    else
+    {
+        this->c = new TCalendario[tamano];
+        this->tamano = tamano;
+    }
+}
+```
+
+拷贝构造函数，需要将传进来的Vector日期类对象进行拷贝。过程是首先创建一个大小为tv.tamano的日期类对象，然后对内部值进行for循环来进行深度拷贝。既然是深度拷贝构造函数那么就必须要将私有成员全部进行拷贝，不然后期有可能会出现无法预料的bug。
+```
+TVectorCalendario::TVectorCalendario(const TVectorCalendario &tv)
+{
+    // Allocate new memory if necessary
+    this->c = new TCalendario[tv.tamano];
+
+    // deep copy
+    for (int i = 0; i < tv.tamano; i++)
+    {
+        this->c[i] = tv.c[i];
+    }
+
+    this->tamano = tv.tamano;
+    this->error = tv.error;
+}
+```
+
+### 析构函数
+
+析构函数就是用来释放内存的，可以手动调用也可以在对象销毁的时候自动调用。这里需要注意的是用的是一个delete[] 而不是delete， 原因是这不是一个单日期而是多个。然后就是加入if判断了
+```
+TVectorCalendario::~TVectorCalendario()
+{
+    // cout << "destructor" << endl;
+    if (this->c != nullptr)
+    {
+        delete[] this->c;
+    }
+    else
+    {
+        this->tamano = 0;
+        this->c = nullptr;
+    }
+}
+```
+### 赋值运算符重载
+返回值为一个对象。首先看代码可以看到的是要对当前对象和传入的对象进行判断，如果相同的话直接返回就好了。如果不相同，首先调用析构函数，先释放当前的对象后赋值传入的给当前的。和拷贝函数差不多。
+```
+TVectorCalendario &TVectorCalendario::operator=(const TVectorCalendario &tv)
+{
+   
+    if (this == &tv)
+    {
+        /* when t = t*/
+        return *this;
+    }
+    /*deleted all resource befere to asign*/
+    (*this).~TVectorCalendario();
+    // deep copy value
+    this->c = new TCalendario[tv.tamano];
+    for (int i = 0; i < tv.tamano; i++)
+    {
+        this->c[i] = tv.c[i];
+    }
+    this->error = tv.error;
+    this->tamano = tv.tamano;
+
+    return *this;
+}
+```
+
+### 等于号运算符重载
+
+这里的等号运算符重载就是来比较两个对象是否相等。没啥可讲的，看代码
+```
+bool TVectorCalendario::operator==(const TVectorCalendario &tv) const
+{
+    if (tv.tamano != this->tamano)
+    {
+        return false;
+    }
+    for (int i = 0; i < tv.tamano; i++)
+    {
+        if (this->c[i] != tv.c[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+```
+
+### 不等于号运算符重载
+
+```
+bool TVectorCalendario::operator!=(const TVectorCalendario &tv) const
+{
+    if (tv.tamano != this->tamano)
+    {
+        return true;
+    }
+    for (int i = 0; i < tv.tamano; i++)
+    {
+        if (this->c[i] != tv.c[i])
+        {
+            return true;
+        }
+    }
+    return false;
+}
+```
+### 左括号运算符重载
+
+也没啥可讲的，直接跳过
+
+```
+TCalendario &TVectorCalendario::operator[](const int i)
+{
+    if (i < 1 || i > this->tamano)
+    {
+        return this->error;
+    }
+    return this->c[i - 1];
+}
+```
+
+### 右括号运算符重载
+
+这里左右重载只需要注意一个带&一个没有就好了。跳过跳过
+```
+TCalendario TVectorCalendario::operator[](const int i) const
+{
+    if (i < 1 || i > this->tamano)
+    {
+        return this->error;
+    }
+    return this->c[i - 1];
+}
+```
+
+### 获取vector大小
+
+```
+int TVectorCalendario::Tamano() const
+{
+    return this->tamano;
+}
+```
+
+
+### 获取vector不是默认日期的对象
+
+```
+int TVectorCalendario::Ocupadas() const
+{
+    // se consideran “posiciones vacías” del vector, aquellas que contengan un TCalendario "vacío"
+    int posiciones = this->tamano;
+    for (int i = 0; i < this->tamano; i++)
+    {
+        if (this->c[i].EsVacio())
+        {
+            posiciones--;
+        }
+    }
+    return posiciones;
+}
+```
+### 判断一个日期对象是否在vector容器中
+
+这里只需要注意一下使用的是等于号（==），而这个我们已经重载过，在上一篇文章中Tcalendario有提到。如不先进行重载此处会报错，比较你在比较两个自己创建的对象
+```
+bool TVectorCalendario::ExisteCal(const TCalendario &tv) const
+{
+    for (int i = 0; i < this->tamano; i++)
+    {
+        if (this->c[i] == tv)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+```
+
+### get_month_day 和 check_days_correct 成员函数
+
+此处已在上篇文章中出现过，直接拿来用就好了。这里就不贴了。
+
+### MostrarMensajes
+
+此成员函数用来打印那些大于传入的日期。还是比较简单的。有几处函数都是在上一篇中已经实现了的，直接拿来用就好了。
+```
+void TVectorCalendario::MostrarMensajes(int day, int month, int year)
+{
+
+    bool date_is_valid = check_days_correct(day, month, year);
+    if (!date_is_valid)
+    {
+        cout << "[]";
+        return;
+    }
+    cout << "[";
+    for (int i = 0; i < this->tamano; i++)
+    {
+        if (this->c[i].Anyo() < year)
+        {
+            continue;
+        }
+        if (this->c[i].Anyo() == year)
+        {
+            if (this->c[i].Mes() < month)
+            {
+                continue;
+            }
+            if (this->c[i].Mes() == month)
+            {
+                if (this->c[i].Dia() < day)
+                {
+                    continue;
+                }
+            }
+        }
+        cout << this->c[i];
+        if (i != this->tamano - 1)
+        {
+            cout << ", ";
+        }
+    }
+    cout << "]";
+}
+```
+### Resize() 实现
+
+可以说是最重要的函数之一了。实现方法是首先要对传入的参数进行判断，如果小于0那么也没有意义。
+然后如果是小于当前大小的话那么就需要删除当前大小最右边的几个。
+如果是大于当前的话就需要扩展了。新扩展的直接放个默认日期就好了。这一部分默认构造已经帮我们完成了
+```
+bool TVectorCalendario::Redimensionar(const int new_size)
+{
+    // si es menor o igual que 0
+    if(new_size <= 0)
+    {
+        return false;
+    }
+    // si es igaul tamanio que en actual
+    if(new_size == this->tamano)
+    {
+        return false;
+    }
+
+    // si es mayor que 0 y mayor que el tamanio actual
+    if(new_size > 0 && new_size > this->tamano)
+    {
+        /*Procedimiento: se crea un ptr de Tcalendario para almacenar. Con un bucle for hasta el valor de tamanio antiguo, se almacena todas informaciones tanto como antiguo como nuevo. El de nuevo se inicia por constructor por defector que es 1/1//1900 y mensaje nullptr, Luego se libera la de antiguo y se asigna con el ptr que hemos creado principio al this. Asi con tamano tambien*/
+        TCalendario *new_c = new TCalendario[new_size];
+        for (int i = 0; i < this->tamano; i++)
+        {
+            new_c[i] = this->c[i];
+        }
+        this->c->~TCalendario();
+        this->c = new_c;
+        this->tamano = new_size;
+    }
+    // si es mayor que 0 y menor que tamanio actual, eliminar por la derecha
+    if(new_size > 0 && new_size < this->tamano)
+    {
+        TCalendario *new_c = new TCalendario[new_size];
+        for (int i = 0; i < new_size; i++)
+        {
+            new_c[i] = this->c[i];
+        }
+        this->c->~TCalendario();
+        this->c = new_c;
+        this->tamano = new_size;
+    }
+    return true;
+
+}
+```[/md]
