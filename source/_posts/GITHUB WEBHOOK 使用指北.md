@@ -1,5 +1,5 @@
 ---
-title: GITHUB webHook 使用方法
+title: GITHUB webHook 使用指北
 layour: post
 uuid: 0c449140-a0ad-11ed-fasfw-e73c5841cd31
 tags: [Github]
@@ -71,7 +71,7 @@ ssh -T git@github.com
 ![](https://img.164314.xyz/img/2024/04/f6e9fa54ce71f0f66792eca3274bab50.png)
 
 再次进行测试。连接成功
-![image|689x26](upload://kjulY0AEb5g0PbTTBieDz5WNaDh.png)
+![](https://img.164314.xyz/img/2024/04/83dd4031b1820305c687cc4b1dcb5ef0.png)
 
 ## 5. 创建一个空的仓库。
 
@@ -181,6 +181,13 @@ https://服务器IP/hook?access_key=fasfsa&param=aaa
 
 而后进行服务器目录下查看。一样的结果。到此结束
 ![](https://img.164314.xyz/img/2024/04/c58a31ed3fcf7664883a5e587453d97f.png)
+
+另外在宝塔插件中日志选项也可以查看
+![](https://img.164314.xyz/img/2024/04/5a21d28973bfe3f9e23e81b1afa1d219.png)
+
+另外不要忘记重启以下bt面板
+
+`bt restart`
 
 另外在宝塔插件中日志选项也可以查看
 ![](https://img.164314.xyz/img/2024/04/5a21d28973bfe3f9e23e81b1afa1d219.png)
