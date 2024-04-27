@@ -1,4 +1,11 @@
-
+---
+title: GITHUB webHook 使用方法
+layour: post
+uuid: 0c449140-a0ad-11ed-fasfw-e73c5841cd31
+tags: [Github]
+categories: Github
+date: 2024-04-27 18:07:08
+---
 
 前几天突发奇想，像是netlify和vercel都是怎么实时获取仓库更新的呢？不可能时每秒钟发送一个get请求到仓库然后获取更新吧。
 
