@@ -1,7 +1,7 @@
 ---
 title: LeetCode 110 Balance binary tree
 layour: post
-uuid: fasw2d-a0ad-11ed-fasfw-e73c5841cd31
+uuid: fasw2d-a0ad-11ed-fasfw-wqr2fa
 tags: [LeetCode]
 categories: LeetCode
 index_img: ![](https://img.164314.xyz/img/2024/05/a93dde062593db689964428be2c21bb8.png)
