@@ -1,3 +1,13 @@
+---
+title: LeetCode 226 invert binary tree
+layour: post
+uuid: fasw2d-a0ad-dwrd-fasfw-wqr2fa
+tags: [LeetCode]
+categories: LeetCode
+index_img:  https://img.164314.xyz/img/2024/05/3ad0682e0d42b168d1284066712d1f9e.png
+date: 2024-05-05 18:07:08
+---
+
 # 请看题
 ![](https://img.164314.xyz/img/2024/05/f3cd89f881cceeb5c15e759eeaa08b28.png)
 
