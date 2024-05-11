@@ -1,5 +1,5 @@
 ---
-title: 【LeetCode】做题家之563. Binary Tree Tilt
+title: LeetCode 563 Binary Tree Tilt
 layour: post
 uuid: ffw22d-a0ad-11ed-fasfw-wqr2fa
 tags: [LeetCode]
