@@ -1,10 +1,10 @@
 ---
 title: LeetCode 563 Binary Tree Tilt
 layour: post
-uuid: ffw22d-a0ad-11ed-fasfw-wqr2fa
+uuid: ffw2d-a0ad-11ed-fasfw-wqr2fa
 tags: [LeetCode]
 categories: LeetCode
-index_img:  ![](https://img.164314.xyz/img/2024/05/0b06136ccc3c9178ab9a2f199a27b5a3.png)
+index_img: https://img.164314.xyz/img/2024/05/0b06136ccc3c9178ab9a2f199a27b5a3.png
 date: 2024-05-11 18:07:08
 ---
 
