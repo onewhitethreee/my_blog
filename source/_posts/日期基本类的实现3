@@ -1,0 +1,737 @@
+---
+title: C++实现BST，重载运算符，友元..【第四篇】
+layour: post
+uuid: 0c449140-a0ad-11ed-b6de-e73c58fasw
+tags: [C++, class]
+categories: C++
+date: 2024-06-13 18:07:08
+---
+
+C++实现BST，重载运算符，友元..【第四篇】
+
+倒数第二篇，早在五月份就写完了但是要考试，现在六月中，已经考完。干脆直接写完这两篇
+
+话不多说直接开干
+
+---
+
+这一次我们要实现一个二叉搜索树，然后重载一些运算符，最后实现一些友元函数。我首先声明了两个类，分别是TABBCalendario和TNodoABB。TABBCalendario是二叉搜索树的类，TNodoABB是二叉搜索树的节点类。
+
+声明如下：
+
+# TNodoABB
+
+```cpp
+
+{
+    friend class TABBCalendario;
+
+private:
+    // Elemento del nodo
+    TCalendario item;
+    // Subárbol izquierdo y derecho
+    TABBCalendario left, right;
+
+public:
+    // Constructor por defecto
+    TNodoABB();
+    // Constructor copia
+    TNodoABB(const TNodoABB &);
+    // Destructor
+    ~TNodoABB();
+    // Sobrecarga del operador asignación
+    TNodoABB &operator=(const TNodoABB &);
+};
+
+```
+
+# TABBCalendario
+
+```
+class TABBCalendario
+{
+     // Sobrecarga del operador salida
+    friend std::ostream &operator<<(std::ostream &, const TABBCalendario &);
+    friend class TNodoABB;
+private:
+    // Puntero al nodo
+    TNodoABB *raiz;
+    // AUXILIAR: devuelve el recorrido en INORDEN
+    void InordenAux(TVectorCalendario &, int &) const;
+    // AUXILIAR: devuelve el recorrido en PREORDEN
+    void PreordenAux(TVectorCalendario &, int &) const;
+    // AUXILIAR: devuelve el recorrido en POSTORDEN
+    void PostordenAux(TVectorCalendario &, int &) const;
+    // Copia de un árbol
+    void copyNode(const TNodoABB *);
+    void deleteNode(TNodoABB *);
+public:
+    // Constructor por defecto
+    TABBCalendario();
+    // Constructor de copia
+    TABBCalendario(const TABBCalendario &);
+    // Destructor
+    ~TABBCalendario();
+    // Sobrecarga del operador asignación
+    TABBCalendario &operator=(const TABBCalendario &);
+    // Sobrecarga del operador igualdad
+    bool operator==(const TABBCalendario &) const;
+    // Devuelve TRUE si el árbol está vacío, FALSE en caso contrario
+    bool EsVacio() const;
+    // Inserta el elemento en el árbol
+    bool Insertar(const TCalendario &); // Borra el elemento en el árbol
+    bool Borrar(const TCalendario &);
+    // Devuelve TRUE si el elemento está en el árbol, FALSE en caso contrario
+    bool Buscar(const TCalendario &) const;
+    // Devuelve el elemento de la raíz del árbol
+    TCalendario Raiz() const;
+    // Devuelve la altura del árbol (la altura de un árbol vacío es 0)
+    int Altura() const;
+    // Devuelve el número de nodos del árbol (un árbol vacío posee 0 nodos)
+    int Nodos() const;
+    // Devuelve el número de nodos hoja en el árbol (la raíz puede ser nodo hoja)
+    int NodosHoja() const;
+    // Devuelve el recorrido en INORDEN sobre un vector
+    TVectorCalendario Inorden() const;
+    // Devuelve el recorrido en PREORDEN sobre un vector
+    TVectorCalendario Preorden() const;
+    // Devuelve el recorrido en POSTORDEN sobre un vector
+    TVectorCalendario Postorden() const;
+    // Devuelve el recorrido en NIVELES sobre un vector
+    TVectorCalendario Niveles() const;
+  
+    // Suma de dos ABB
+    TABBCalendario operator+(const TABBCalendario &) const;
+    // Resta de dos ABB
+    TABBCalendario operator-(const TABBCalendario &) const;
+    // ---------------------
+    TVectorCalendario ABBCamino(TListaCalendario &l);
+    TABBCalendario invertTree(const TABBCalendario &) const;
+    void getCamino(const TCalendario &, TVectorCalendario &) const;
+    // Binary Tree Level Order Traversal
+    TVectorCalendario levelOrder() const;
+    TCalendario findBottomLeftValue() const;
+};
+
+```
+
+## 实现TNodoABB
+
+```
+节点
+TNodoABB::TNodoABB()
+{
+    this->item = TCalendario();
+    this->left = TABBCalendario();
+    this->right = TABBCalendario();
+}
+// 深拷贝
+TNodoABB::TNodoABB(const TNodoABB &tn)
+{
+    TNodoABB temp = tn;
+    this->item = temp.item;
+    this->left = temp.left;
+    this->right = temp.right;
+    temp.~TNodoABB();
+}
+// 析构
+TNodoABB::~TNodoABB()
+{
+    this->item.~TCalendario();
+    this->left.~TABBCalendario();
+    this->right.~TABBCalendario();
+}
+// 赋值
+TNodoABB &TNodoABB::operator=(const TNodoABB &tn)
+{
+    // when t = t
+    if (this == &(tn))
+    {
+        return *this;
+    }
+    (*this).~TNodoABB();
+    this->item = tn.item;
+    this->left = tn.left;
+    this->right = tn.right;
+    return *this;
+}
+
+```
+
+# 实现TABBCalendario
+
+## Inorden遍历
+
+```
+void TABBCalendario::InordenAux(TVectorCalendario &tv, int &i) const
+{
+    if (this->raiz == nullptr)
+    {
+        return;
+    }
+    this->raiz->left.InordenAux(tv, i);
+    tv[i] = this->raiz->item;
+    i++;
+    this->raiz->right.InordenAux(tv, i);
+}
+
+```
+
+## Preorden遍历
+
+```
+
+void TABBCalendario::PreordenAux(TVectorCalendario &tv, int &i) const
+{
+    if (this->raiz == nullptr)
+    {
+        return;
+    }
+    tv[i] = this->raiz->item;
+    i++;
+    this->raiz->left.PreordenAux(tv, i);
+    this->raiz->right.PreordenAux(tv, i);
+}
+```
+
+## Postorden遍历
+
+```
+void TABBCalendario::PostordenAux(TVectorCalendario &tv, int &i) const
+{
+    if (this->raiz == nullptr)
+    {
+        return;
+    }
+    this->raiz->left.PostordenAux(tv, i);
+    this->raiz->right.PostordenAux(tv, i);
+    tv[i] = this->raiz->item;
+    i++;
+}
+```
+
+## 构造函数
+
+```
+TABBCalendario::TABBCalendario() : raiz(nullptr) {}
+```
+
+## 深拷贝
+
+```
+TABBCalendario::TABBCalendario(const TABBCalendario &tAbb) 
+{
+    this->raiz = nullptr;
+    copyNode(tAbb.raiz);
+}
+// copiar profundamente de cada nodo
+void TABBCalendario::copyNode(const TNodoABB *tn)
+{
+    if(tn == nullptr)
+    {
+        return;
+    }
+    this->raiz = new TNodoABB();
+    this->raiz->item = tn->item;
+    this->raiz->left.copyNode(tn->left.raiz);
+    this->raiz->right.copyNode(tn->right.raiz);
+}
+```
+
+## 析构函数
+
+```
+
+TABBCalendario::~TABBCalendario() 
+{
+    this->raiz = nullptr;
+    // deleteNode(this->raiz);
+}
+// borrar cada nodo
+void TABBCalendario::deleteNode(TNodoABB *tn)
+{
+    if(tn == nullptr)
+    {
+        return;
+    }
+    tn->left.deleteNode(tn);
+    tn->right.deleteNode(tn);
+    delete tn;
+    tn = nullptr;
+}
+```
+
+## 赋值运算符
+
+```
+
+TABBCalendario &TABBCalendario::operator=(const TABBCalendario &tAbb)
+{
+    // when t = t
+    if (this == &tAbb)
+    {
+        return *this;
+    }
+    (*this).~TABBCalendario();
+    copyNode(tAbb.raiz);
+    return *this;
+}
+```
+
+## 等于运算符
+
+```
+
+bool TABBCalendario::operator==(const TABBCalendario &tAbb) const
+{
+    if(this->Inorden() == tAbb.Inorden())
+    {
+        return true;
+    }
+
+    return false;
+} 
+```
+
+## 节点是否为空
+
+```
+
+bool TABBCalendario::EsVacio() const
+{
+    if (this->raiz == nullptr)
+    {
+        return true;
+    }
+    return false;
+}
+```
+
+## 插入
+
+```
+
+bool TABBCalendario::Insertar(const TCalendario &tc)
+{
+    /*
+    Procedimiento:
+            comprobar que la raiz actual de this es vacio or no. Si lo es, insertar, si no lo es, resursividad.
+            recursividad lo hace que comprobar varias veces si la raiz actual de this anterior es vacio o no. si lo es, insertar
+    */
+    if (this->raiz == nullptr)
+    {
+        this->raiz = new TNodoABB();
+        this->raiz->item = tc;
+        return true;
+    }
+    if (this->raiz->item == tc)
+    {
+        return false;
+    }
+    if (this->raiz->item > tc)
+    {
+        return this->raiz->left.Insertar(tc);
+    }
+    if (this->raiz->item < tc)
+    {
+        return this->raiz->right.Insertar(tc);
+    }
+    return false;
+}
+
+```
+
+## 删除
+
+```
+bool TABBCalendario::Borrar(const TCalendario &tc)
+{
+    if (this->raiz == NULL)
+    {
+        return false;
+    }
+
+    if (this->raiz->item > tc)
+    {
+        return this->raiz->left.Borrar(tc);
+    }
+
+    else if (this->raiz->item < tc)
+    {
+        return this->raiz->right.Borrar(tc);
+    }
+    else
+    {
+        if (this->raiz->left.EsVacio() && this->raiz->right.EsVacio())
+        {
+            delete this->raiz;
+            this->raiz = NULL;
+            return true;
+        }
+
+        if (this->raiz->left.EsVacio() && !this->raiz->right.EsVacio())
+        {
+            TNodoABB *temp = this->raiz;
+            this->raiz = this->raiz->right.raiz;
+            temp->right.raiz = NULL;
+            delete temp;
+            return true;
+        }
+
+        if (!this->raiz->left.EsVacio() && this->raiz->right.EsVacio())
+        {
+            TNodoABB *temp = this->raiz;
+            this->raiz = this->raiz->left.raiz;
+            temp->left.raiz = NULL;
+            delete temp;
+            return true;
+        }
+
+        TNodoABB *temp = this->raiz->left.raiz;
+        if (temp == NULL)
+        {
+            return false;
+        }
+
+        while (!temp->right.EsVacio())
+        {
+            temp = temp->right.raiz;
+        }
+
+        this->raiz->item = temp->item;
+        this->raiz->left.Borrar(temp->item);
+        return true;
+    }
+    return false;
+}
+```
+
+## 查找
+
+```
+
+bool TABBCalendario::Buscar(const TCalendario &tc) const
+{
+    if (this->raiz == nullptr) // si no lo encuentra entonces return false
+    {
+        return false;
+    }
+    if (this->raiz->item == tc) // si lo encuentra entonces return true
+    {
+        return true;
+    }
+
+    if (this->raiz->item < tc) // si el item de la raiz es menor que el tc, entonces buscar en la derecha
+    {
+        return this->raiz->right.Buscar(tc);
+    }
+    if (this->raiz->item > tc) // si el item de la raiz es mayor que el tc, entonces buscar en la izquierda
+    {
+        return this->raiz->left.Buscar(tc);
+    }
+    return false;
+}
+```
+
+## 根节点
+
+```
+
+TCalendario TABBCalendario::Raiz() const
+{
+    // un arbol solo tiene una raiz, si no lo hay, devolver un Tcalendario por defecto
+    if (this->raiz != nullptr)
+    {
+        return this->raiz->item;
+    }
+    return TCalendario();
+}
+```
+
+## 高度
+
+```
+
+int TABBCalendario::Altura() const
+{
+    if (this->raiz == nullptr)
+    {
+        return 0;
+    }
+    return 1 + std::max(this->raiz->left.Altura(), this->raiz->right.Altura());
+}
+```
+
+## 节点数
+
+```
+int TABBCalendario::Nodos() const
+{
+    if (this->raiz == nullptr)
+    {
+        return 0;
+    }
+    return 1 + this->raiz->left.Nodos() + this->raiz->right.Nodos();
+}
+```
+
+## 叶子节点数
+
+```
+int TABBCalendario::NodosHoja() const
+{
+    if (this->raiz == nullptr)
+    {
+        return 0;
+    }
+    if (this->raiz->left.raiz == nullptr && this->raiz->right.raiz == nullptr)
+    {
+        return 1;
+    }
+    return this->raiz->left.NodosHoja() + this->raiz->right.NodosHoja();
+}
+```
+
+## 三大遍历
+
+```
+TVectorCalendario TABBCalendario::Inorden() const
+{
+    int pos = 1;
+    TVectorCalendario v(Nodos());
+    InordenAux(v, pos);
+    return v;
+}
+// Devuelve el recorrido en PREORDEN sobre un vector
+TVectorCalendario TABBCalendario::Preorden() const
+{
+    int pos = 1;
+    TVectorCalendario v(Nodos());
+    PreordenAux(v, pos);
+    return v;
+}
+// Devuelve el recorrido en POSTORDEN sobre un vector
+TVectorCalendario TABBCalendario::Postorden() const
+{
+    int pos = 1;
+    TVectorCalendario v(Nodos());
+    PostordenAux(v, pos);
+    return v;
+}
+```
+
+## 层次遍历
+
+```
+TVectorCalendario TABBCalendario::Niveles() const
+{
+    std::queue<TNodoABB *> q; // cola
+    TVectorCalendario v(Nodos()); // crear un vector de tamanio de nodos
+    int pos = 1;
+  
+    if (this->raiz != nullptr)
+    {
+        q.push(this->raiz);
+    }
+
+    while (!q.empty())
+    {
+        TNodoABB *temp = q.front(); // coger el primer elemento de la cola
+        q.pop(); // borrar el primer elemento de la cola
+        v[pos] = temp->item; // poner el item de ese nodo en el vector
+        pos++; // aumentar la posicion
+        if (temp->left.raiz != nullptr) // si el nodo tiene un hijo izquierdo, ponerlo en la cola
+        {
+            q.push(temp->left.raiz);
+        }
+        if (temp->right.raiz != nullptr) // si el nodo tiene un hijo derecho, ponerlo en la cola
+        {
+            q.push(temp->right.raiz);
+        }
+    }
+    return v;
+}
+```
+
+## 重载输出运算符
+
+```
+std::ostream &operator<<(std::ostream &os, const TABBCalendario &tabb)
+{
+    TVectorCalendario t = tabb.Niveles();
+
+    return os << t;
+}
+```
+
+## 重载加法运算符
+
+```
+
+TABBCalendario TABBCalendario::operator+(const TABBCalendario &tabb) const
+{
+  
+    TABBCalendario temp = *this;
+    TVectorCalendario v = tabb.Inorden();
+    for (int i = 1; i <= v.Tamano(); i++)
+    {
+        temp.Insertar(v[i]);
+    }
+    return temp;
+  
+}
+
+```
+
+## 重载减法运算符
+
+```
+
+TABBCalendario TABBCalendario::operator-(const TABBCalendario &tabb) const
+{
+    TABBCalendario temp;
+    TVectorCalendario _this = this->Inorden();
+    for(int i = 1; i <= _this.Tamano(); i++)
+    {
+        if(!tabb.Buscar(_this[i]))
+        {
+            temp.Insertar(_this[i]);
+        }
+    }
+    return temp;
+}
+```
+
+// 左右互换
+
+```
+TABBCalendario TABBCalendario::invertTree(const TABBCalendario &t) const
+{
+    if(t.EsVacio())
+    {
+        return t;
+    }
+    TABBCalendario temp = t.raiz->left;
+    t.raiz->left = t.raiz->right;
+    t.raiz->right = temp;
+    invertTree(t.raiz->left);
+    invertTree(t.raiz->right);
+
+    return t;
+}
+
+TVectorCalendario TABBCalendario::ABBCamino(TListaCalendario &tl)
+{
+    TVectorCalendario resultado;
+    if(tl.EsVacia() || this->EsVacio())
+    {
+        return resultado;
+    }
+
+    TListaPos pos = tl.Primera();
+   
+    while(!pos.EsVacia())
+    {
+        if(!this->Buscar(tl.Obtener(pos)))
+        {
+            this->Insertar(tl.Obtener(pos));
+            TCalendario c = tl.Obtener(pos);
+            this->getCamino(c, resultado);
+        }
+        pos = pos.Siguiente();
+    }
+    for(TListaPos i = tl.Primera(); !i.EsVacia(); i = i.Siguiente())
+    {
+        if(!this->Buscar(tl.Obtener(i)))
+        {
+            this->Insertar(tl.Obtener(i));
+            TCalendario c = tl.Obtener(i);
+            this->getCamino(c, resultado);
+        }
+    }
+    return resultado;
+}
+
+void TABBCalendario::getCamino(const TCalendario &c, TVectorCalendario &tv) const
+{
+    if(this->raiz == nullptr)
+    {
+        return;
+    }
+    if(this->raiz->item == c)
+    {
+        tv.Redimensionar(tv.Tamano() + 1);
+        tv[tv.Tamano()] = this->raiz->item;
+
+        return;
+    }
+    if(this->raiz->item > c)
+    {
+        tv.Redimensionar(tv.Tamano() + 1);
+        tv[tv.Tamano()] = this->raiz->item;
+        this->raiz->left.getCamino(c, tv);
+    }
+    if(this->raiz->item < c)
+    {
+        tv.Redimensionar(tv.Tamano() + 1);
+        tv[tv.Tamano()] = this->raiz->item;
+        this->raiz->right.getCamino(c, tv);
+    }
+    return;
+}
+
+TVectorCalendario TABBCalendario::levelOrder() const
+{
+    std::queue<TNodoABB *> q;
+    TVectorCalendario v(Nodos());
+    int pos = 1;
+  
+    if (this->raiz != nullptr)
+    {
+        q.push(this->raiz);
+    }
+
+    while (!q.empty())
+    {
+        TNodoABB *temp = q.front();
+        q.pop();
+        v[pos] = temp->item;
+        pos++;
+        if (temp->left.raiz != nullptr)
+        {
+            q.push(temp->left.raiz);
+        }
+        if (temp->right.raiz != nullptr)
+        {
+            q.push(temp->right.raiz);
+        }
+    }
+    return v;
+}
+
+TCalendario TABBCalendario::findBottomLeftValue() const
+{
+    std::queue<TNodoABB *> q;
+    TCalendario result;
+    if (this->raiz != nullptr)
+    {
+        q.push(this->raiz);
+    }
+
+    while (!q.empty())
+    {
+        TNodoABB *temp = q.front();
+        q.pop();
+        result = temp->item;
+        if (temp->right.raiz != nullptr)
+        {
+            q.push(temp->right.raiz);
+        }
+        if (temp->left.raiz != nullptr)
+        {
+            q.push(temp->left.raiz);
+        }
+    }
+    return result;
+}
+```
